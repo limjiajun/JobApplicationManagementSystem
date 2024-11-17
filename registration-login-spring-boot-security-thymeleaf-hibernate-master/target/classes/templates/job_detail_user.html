@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>职位详情</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+<!-- Create navigation bar -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" th:href="@{/user/}">用户页面</a>        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a th:href="@{/user/jobs/grid}">职位网格页面</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <li><a th:href="@{/user/resume}">上传简历</a></li>
+                        
+                    <li><a th:href="@{/login}" sec:authorize="isAuthenticated()">Logout</a></li>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="text-center">职位详情</h2>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title" th:text="${job.title}">职位名称</h3>
+        </div>
+        <div class="panel-body">
+            <p><strong>公司：</strong> <span th:text="${job.company}">公司名称</span></p>
+            <p><strong>地点：</strong> <span th:text="${job.location}">地点</span></p>
+            <p><strong>薪资范围：</strong> <span th:text="${job.salaryRange}">薪资范围</span></p>
+            <p><strong>职位描述：</strong><span th:text="${job.description}">职位描述</span></p>
+            <p><strong>职位要求：</strong><span th:text="${job.requirements}">职位要求</span></p>
+
+            <div th:if="${job.imagePath}">
+                <p><strong>职位图片：</strong></p>
+                <img th:src="@{${job.imagePath}}" alt="职位图片" style="max-width: 300px; max-height: 300px;">
+            </div>
+
+            <!-- Apply button -->
+            <form th:action="@{/user/apply/{id}(id=${job.id})}" method="post">
+                <button type="submit" th:text="${alreadyApplied ? '已申请' : '申请职位'}" 
+                        th:disabled="${alreadyApplied}" class="btn btn-success">
+                </button>
+            </form>
+            
+        </div>
+    </div>
+    <a th:href="@{/user/jobs/grid}" class="btn btn-primary">返回职位列表</a>
+</div>
+</body>
+</html>

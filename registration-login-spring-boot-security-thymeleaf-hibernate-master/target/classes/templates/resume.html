@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>上传简历</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <style>
+        body, html {
+            min-height: 120vh;
+            overflow-y: auto;
+        }
+        .form-container {
+            max-width: 500px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body>
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" th:href="@{/user/}">用户页面</a>        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a th:href="@{/user/jobs/grid}">职位网格页面</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <li><a th:href="@{/user/resume}">简历</a></li>
+                        
+                    <li><a th:href="@{/login}" sec:authorize="isAuthenticated()">登出</a></li>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<br><br><br>
+<br><br><br>
+
+<div class="container mt-5">
+    <h2 class="text-center">上传简历</h2>
+    <div class="form-container">
+        <form th:action="@{/user/resume/upload}" method="post" enctype="multipart/form-data">
+            <div class="mb-3">
+                <label for="photo" class="form-label">上传照片</label>
+                <input type="file" class="form-control" id="photo" name="photo" accept="image/*" onchange="previewImage(event)">
+                <div class="mt-3 text-center">
+                    <img id="preview" src="#" alt="照片预览" style="display:none; max-width: 200px; max-height: 200px;" class="mx-auto d-block">
+                </div>
+            </div>
+        
+            <!-- 上传简历文件 -->
+            <div class="mb-3">
+                <label for="resumeFile" class="form-label">上传简历 (PDF, DOC)</label>
+                <input type="file" class="form-control" id="resumeFile" name="resumeFile" accept=".pdf,.doc,.docx" required>
+            </div>
+        
+            <!-- 姓名 -->
+            <div class="mb-3">
+                <label for="fullName" class="form-label">全名</label>
+                <input type="text" class="form-control" id="fullName" name="fullName" required>
+            </div>
+        
+            <!-- 邮箱 -->
+            <div class="mb-3">
+                <label for="email" class="form-label">邮箱</label>
+                <input type="email" class="form-control" id="email" name="email" required>
+            </div>
+        
+            <!-- 性别 -->
+            <div class="mb-3">
+                <label for="gender" class="form-label">性别</label>
+                <select class="form-control" id="gender" name="gender" required>
+                    <option value="male">男</option>
+                    <option value="female">女</option>
+                </select>
+            </div>
+        
+            <!-- 年龄 -->
+            <div class="mb-3">
+                <label for="age" class="form-label">年龄</label>
+                <input type="number" class="form-control" id="age" name="age" required>
+            </div>
+        
+            <!-- 电话号码 -->
+            <div class="mb-3">
+                <label for="phoneNumber" class="form-label">手机号码</label>
+                <input type="text" class="form-control" id="phoneNumber" name="phoneNumber" required>
+            </div>
+        
+            <!-- 婚姻状态 -->
+            <div class="mb-3">
+                <label for="maritalStatus" class="form-label">婚姻状态</label>
+                <select class="form-control" id="maritalStatus" name="maritalStatus" required>
+                    <option value="single">未婚</option>
+                    <option value="married">已婚</option>
+                    <option value="divorced">离婚</option>
+                    <option value="widowed">丧偶</option>
+                </select>
+            </div>
+        
+            <!-- 期望薪资 -->
+            <div class="mb-3">
+                <label for="expectedSalary" class="form-label">期望薪资</label>
+                <input type="text" class="form-control" id="expectedSalary" name="expectedSalary" required>
+            </div>
+        
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary" style="width: 50%;">提交简历</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfL+PY2m9U0x00HwyCCFCz3OSBmPFqddw3c6r9gVX"
+        crossorigin="anonymous"></script>
+
+<script>
+    function previewImage(event) {
+        var preview = document.getElementById('preview');
+        var file = event.target.files[0];
+        var reader = new FileReader();
+
+        reader.onload = function() {
+            preview.src = reader.result;
+            preview.style.display = 'block';
+        };
+
+        if (file) {
+            reader.readAsDataURL(file);
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+</script>
+</body>
+</html>

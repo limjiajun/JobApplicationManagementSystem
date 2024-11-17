@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Manage Users</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <style>
+        /* 自定义样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+            border-radius: 0;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 20px;
+            height: 100%;
+            padding-left: 0;
+            margin-top: 51px;
+            z-index: 1000;
+        }
+
+        .sidebar a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            flex-grow: 1;
+            padding-bottom: 50px;
+            overflow: auto;
+            min-height: 100vh;
+        }
+
+        .content-header {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .content-header h1 {
+            margin: 0;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+
+
+        /* Smaller button */
+        .btn-sm {
+            padding: 5px 10px; /* Adjust button padding for smaller size */
+            font-size: 12px; /* Decrease font size */
+        }
+
+        /* Style for images in the table */
+        .table img {
+            max-width: 100px; /* Limit the width of the images */
+            max-height: 100px; /* Limit the height of the images */
+            object-fit: cover; /* Maintain aspect ratio without distortion */
+        }
+
+        /* Prevent text overflow and add ellipsis */
+        .table td, .table th {
+            max-width: 150px; /* Set a maximum width for cells */
+            word-wrap: break-word; /* Allow wrapping for long words */
+            overflow: hidden; /* Hide overflowed text */
+            text-overflow: ellipsis; /* Show ellipsis when the text is too long */
+        }
+        .btn-create {
+            padding: 10px 20px; /* Adjust button padding for smaller size */
+            font-size: 12px; /* Decrease font size */
+        }
+
+
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark fixed-top">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#" th:href="@{/admin}">后台管理</a>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <ul class="nav flex-column">
+        <li class="nav-item">
+            <a th:href="@{/admin/create_job}" class="nav-link" th:classappend="${#request.requestURI.contains('/create_job')} ? 'active'">创建职位</a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/admin/jobs}" class="nav-link" th:classappend="${#request.requestURI.contains('/jobs')} ? 'active'">职位列表</a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/admin/jobs/grid}" class="nav-link" th:classappend="${#request.requestURI.contains('/grid')} ? 'active'">查看职位网格</a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/admin/applications}" class="nav-link" th:classappend="${#request.requestURI.contains('/applications')} ? 'active'">职位申请审核</a>
+        </li>
+        <li class="nav-item">
+            <a th:href="@{/login}" sec:authorize="isAuthenticated()" class="nav-link">登出</a>
+        </li>
+    </ul>
+</div>
+
+
+
+<br><br>
+<!-- Main content -->
+<div class="main-content">
+    <div class="container mt-5">
+        <h2 class="text-center">用户管理</h2>
+
+        <!-- Table -->
+        <div class="table-container">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+            <th>ID</th>
+            <th>Full Name</th>
+            <th>Email</th>
+            <th>Role</th>
+            <th>Actions</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="user : ${users}">
+            <td th:text="${user.id}">No</td>
+            <td th:text="${user.firstName + ' ' + user.lastName}">全美</td>
+            <td th:text="${user.email}">邮箱地址</td>
+            <td>
+                <span th:each="role : ${user.roles}" th:text="${role.name}" class="label label-info"></span>
+            </td>
+            <td>
+                <form th:action="@{/admin/users/delete/{id}(id=${user.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?');">Delete</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfL+PY2m9U0x00HwyCCFCz3OSBmPFqddw3c6r9gVX"
+        crossorigin="anonymous"></script>
+</body>
+</html>

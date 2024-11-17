@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+    <meta charset="UTF-8">
+    <title>Job Grid for Users</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <style>
+        .job-card {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+            min-height: 350px; /* 设置卡片的最小高度 */
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between; /* 使内容居中和对齐 */
+        }
+        .job-card:hover {
+            box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        .job-image {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        .job-title {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+        .job-location, .job-salary {
+            font-size: 0.9rem;
+            color: #555;
+        }
+        .job-card .btn {
+            align-self: center; /* 将按钮居中 */
+        }
+    </style>
+</head>
+<body>
+<!-- create navigation bar ( header) -->
+<nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#" th:href="@{/user/}">用户页面</a>        </div>
+        <div id="navbar" class="collapse navbar-collapse">
+            <ul class="nav navbar-nav">
+                <li><a th:href="@{/user/jobs/grid}">职位网格页面</a></li>
+                <li sec:authorize="isAuthenticated()">
+                    <li><a th:href="@{/user/resume}">简历</a></li>
+                        
+                    <li><a th:href="@{/login}" sec:authorize="isAuthenticated()">登出</a></li>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-5">
+    <h2 class="text-center">职位网格列表</h2>
+    <div class="row">
+        <div class="col-md-4" th:each="job : ${jobs}">
+            <div class="job-card">
+                <img th:src="@{${job.imagePath}}" alt="职位图片" class="job-image" th:if="${job.imagePath}" />
+                <div class="job-title" th:text="${job.title}">职位名称</div>
+                <p class="job-location"><strong>地点:</strong> <span th:text="${job.location}">地点</span></p>
+                <p class="job-salary"><strong>薪资范围:</strong> <span th:text="${job.salaryRange}">薪资范围</span></p>
+                <p><strong>公司:</strong> <span th:text="${job.company}">公司名称</span></p>
+
+                <a th:href="@{/user/jobs/detail/{id}(id=${job.id})}" class="btn btn-info btn-sm">查看详情</a>
+            </div>
+        </div>
+    </div>
+    <a th:href="@{/admin}" class="btn btn-primary">返回管理仪表盘</a>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfL+PY2m9U0x00HwyCCFCz3OSBmPFqddw3c6r9gVX"
+        crossorigin="anonymous"></script>
+</body>
+</html>

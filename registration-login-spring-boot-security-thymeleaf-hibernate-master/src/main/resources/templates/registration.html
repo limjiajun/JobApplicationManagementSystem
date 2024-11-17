@@ -1,0 +1,60 @@
+
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+	<meta charset="UTF-8">
+	<title>注册</title>
+	<link rel="stylesheet"
+		  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+		  integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+		  crossorigin="anonymous">
+</head>
+<body>
+
+<div class="container">
+	<div class="row">
+		<div class="col-md-6 col-md-offset-3">
+			<h1>欢迎注册</h1>
+
+			<!-- 成功消息 -->
+			<div th:if="${successMessage}" class="alert alert-success alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<p th:text="${successMessage}"></p>
+			</div>
+
+			<!-- 错误消息 -->
+			<div th:if="${errorMessage}" class="alert alert-danger alert-dismissible" role="alert">
+				<button type="button" class="close" data-dismiss="alert" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<p th:text="${errorMessage}"></p>
+			</div>
+
+			<form th:action="@{/registration}" method="post" th:object="${user}">
+				<div class="form-group">
+					<label for="firstName">名字</label>
+					<input id="firstName" class="form-control" th:field="*{firstName}" required autofocus>
+				</div>
+				<div class="form-group">
+					<label for="lastName">姓氏</label>
+					<input id="lastName" class="form-control" th:field="*{lastName}" required>
+				</div>
+				<div class="form-group">
+					<label for="email">邮箱</label>
+					<input id="email" class="form-control" th:field="*{email}" required>
+				</div>
+				<div class="form-group">
+					<label for="password">密码</label>
+					<input id="password" class="form-control" type="password" th:field="*{password}" required>
+				</div>
+				<button type="submit" class="btn btn-success">注册</button>
+				<span>已有账号? <a th:href="@{/login}">登录</a></span>
+			</form>
+		</div>
+	</div>
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+		integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfL+PY2m9U0x00HwyCCFCz3OSBmPFqddw3c6r9gVX"
+		crossorigin="anonymous"></script>
+</body>
+
+</html>

@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>后台管理</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="your_custom_styles.css">
+    <style>
+        /* 自定义样式 */
+        body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            font-family: Arial, sans-serif;
+        }
+
+        .container {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+        }
+
+        .navbar {
+            margin-bottom: 0;
+            border-radius: 0;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 20px;
+            height: 100%;
+            padding-left: 0;
+            margin-top: 51px;
+        }
+
+        .sidebar a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            padding: 20px;
+            flex-grow: 1;
+            padding-bottom: 50px;
+        }
+
+        .footer {
+            background-color: #2c3e50;
+            color: white;
+            text-align: center;
+            padding: 10px;
+            position: fixed;
+            bottom: 0;
+            width: 100%;
+        }
+
+        .content-header {
+            background-color: #ecf0f1;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+
+        .content-header h1 {
+            margin: 0;
+        }
+
+        .card {
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="#" th:href="@{/admin}">后台管理</a>
+        </div>
+    </div>
+</nav>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <ul class="nav nav-sidebar">
+        <li th:classappend="${#request.requestURI.contains('/jobs')} ? 'active'">
+            <a th:href="@{/admin/users}">用户管理</a>
+        </li>
+        <li th:classappend="${#request.requestURI.contains('/create_job')} ? 'active'">
+            <a th:href="@{/admin/create_job}">创建职位</a>
+        </li>
+        <li th:classappend="${#request.requestURI.contains('/jobs')} ? 'active'">
+            <a th:href="@{/admin/jobs}">职位列表</a>
+        </li>
+        <li th:classappend="${#request.requestURI.contains('/grid')} ? 'active'">
+            <a th:href="@{/admin/jobs/grid}">查看职位网格</a>
+        </li>
+        <li th:classappend="${#request.requestURI.contains('/applications')} ? 'active'">
+            <a th:href="@{/admin/applications}">职位申请审核</a>
+        </li>
+        <li>
+            <a th:href="@{/login}" sec:authorize="isAuthenticated()">登出</a>
+        </li>
+    </ul>
+</div>
+<br><br>
+<br>
+<br>
+
+<!-- Main content -->
+<div class="main-content">
+    <div class="content-header">
+        <h1>欢迎来到后台管理</h1>
+    </div>
+
+    <!-- 统计信息 -->
+    <div class="row">
+        <div class="col-md-3">
+            <div class="card">
+                <h4 class="card-header">总用户数</h4>
+                <div class="card-body">
+                    <p th:text="${totalUsers}"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-3">
+            <div class="card">
+                <h4 class="card-header">总简历数</h4>
+                <div class="card-body">
+                    <p th:text="${totalResumes}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="card">
+                <h4 class="card-header">总职位数</h4>
+                <div class="card-body">
+                    <p th:text="${totalJobs}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 薪资范围 -->
+    <div class="row">
+        <!-- Salary Range Chart -->
+        <div class="col-md-6">
+            <div class="card">
+                <h4 class="card-header">薪资范围</h4>
+                <div class="card-body">
+                    <canvas id="salaryChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    var ctx = document.getElementById('salaryChart').getContext('2d');
+    var salaryChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: ['最低薪资', '最高薪资'],
+            datasets: [{
+                label: '薪资范围',
+                data: [
+                    /*[[${minSalary}]]*/, /*[[${maxSalary}]]*/ // 通过后台动态传递这些数据
+                ],
+                backgroundColor: ['#FF5733', '#33FF57']
+            }]
+        }
+    });
+</script>
+
+<!-- Scripts -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

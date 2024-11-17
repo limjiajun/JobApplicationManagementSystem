@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>查看简历</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+</head>
+<body>
+
+    <!-- Admin Dashboard Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container">
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#" th:href="@{/admin}">Admin Dashboard</a>
+            </div>
+            <div id="navbar" class="collapse navbar-collapse">
+                <ul class="nav navbar-nav">
+                    <li th:classappend="${#request.requestURI.contains('/admin/jobs')} ? 'active'">
+                        <a th:href="@{/admin/jobs}">职位列表</a>
+                    </li>
+                    <li th:classappend="${#request.requestURI.contains('/admin/resumes')} ? 'active'">
+                        <a th:href="@{/admin/resumes}">查看简历</a>
+                    </li>
+                    <li>
+                        <a th:href="@{/login}" sec:authorize="isAuthenticated()">Logout</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <br><br><br>
+
+    <!-- Resume Details Section -->
+    <div class="container mt-5">
+        <a th:href="@{/admin/jobs}" class="btn btn-secondary mb-3">返回职位列表</a>
+        <h2 class="text-center">简历详情</h2>
+        
+        <!-- Resume Info Table -->
+        <div class="form-container">
+            <table class="table table-bordered">
+                <tr>
+                    <th>全名</th>
+                    <td th:text="${resume.fullName}"></td>
+                </tr>
+                <tr>
+                    <th>性别</th>
+                    <td th:text="${resume.gender}"></td>
+                </tr>
+                <tr>
+                    <th>年龄</th>
+                    <td th:text="${resume.age}"></td>
+                </tr>
+                <tr>
+                    <th>电话</th>
+                    <td th:text="${resume.phoneNumber}"></td>
+                </tr>
+                <tr>
+                    <th>婚姻状态</th>
+                    <td th:text="${resume.maritalStatus}"></td>
+                </tr>
+                <tr>
+                    <th>照片</th>
+                    <td>
+                        <img th:src="@{'/uploads/resume/' + ${resume.photoPath}}" alt="Resume Photo" style="max-width: 150px;">
+                    </td>
+                </tr>
+                <tr>
+                    <th>简历文件</th>
+                    <td>
+                        <a th:href="@{/admin/download/resume/{fileName}(fileName=${resume.resumeFilePath})}" class="btn btn-info">下载简历</a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+</body>
+</html>

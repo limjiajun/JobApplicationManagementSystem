@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>职位网格列表</title>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+
+        /* Sidebar styles */
+        .sidebar {
+            width: 250px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #2c3e50;
+            color: white;
+            height: 100%;
+            padding-top: 20px;
+        }
+
+        .sidebar a {
+            color: white;
+            padding: 10px;
+            text-decoration: none;
+            display: block;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        .sidebar .active {
+            background-color: #2980b9;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+        }
+
+        /* Job Card Styles */
+        .job-card {
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: box-shadow 0.3s;
+            background-color: white;
+            height: 320px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .job-card:hover {
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .job-image {
+            max-width: 100%;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+
+        /* 修改职位名称字段，强制换行 */
+        .job-title, .job-location, .job-salary, .job-company {
+            font-weight: bold;
+            font-size: 1rem;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            word-wrap: break-word;  /* 超过宽度时换行 */
+            word-break: break-word; /* 如果有长单词超出容器，强制换行 */
+            max-width: 100%;  /* 确保宽度不超出容器 */
+        }
+
+        .job-card .btn {
+            margin-top: auto;  /* 让按钮浮动到卡片的底部 */
+            background-color: #2980b9;
+            border-color: #2980b9;
+            color: white;
+        }
+
+        .btn:hover {
+            background-color: #3498db;
+            border-color: #3498db;
+        }
+
+        /* Adjust grid layout for 4 items per row */
+        .job-card-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-between;
+        }
+
+        .job-card-container .col-md-3 {
+            flex: 0 0 24%;  /* Adjust the width for 4 cards in a row */
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .job-card-container .col-md-3 {
+                flex: 0 0 48%;  /* Adjust for 2 cards per row on medium screens */
+            }
+        }
+
+        @media (max-width: 576px) {
+            .job-card-container .col-md-3 {
+                flex: 0 0 100%;  /* Adjust for 1 card per row on small screens */
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- Sidebar -->
+<div class="sidebar">
+    <a href="#" class="active">后台管理</a>
+    <a th:href="@{/admin/create_job}" th:classappend="${#request.requestURI.contains('/create_job')} ? 'active'">创建职位</a>
+    <a th:href="@{/admin/jobs}" th:classappend="${#request.requestURI.contains('/jobs')} ? 'active'">职位列表</a>
+    <a th:href="@{/admin/jobs/grid}" th:classappend="${#request.requestURI.contains('/grid')} ? 'active'">查看职位网格</a>
+    <a th:href="@{/login}" sec:authorize="isAuthenticated()">登出</a>
+</div>
+
+<!-- Main Content -->
+<div class="main-content">
+    <h2 class="text-center">职位网格列表</h2>
+
+    <!-- Search box to filter jobs -->
+    <div class="form-group">
+        <form method="get" th:action="@{/admin/jobs/grid}">
+            <input type="text" id="searchBox" name="search" class="form-control" placeholder="搜索职位..." value="" />
+        </form>
+    </div>
+
+    <div class="job-card-container">
+        <div class="col-md-3 job-card" th:each="job : ${jobs}">
+            <div class="job-card">
+                <img th:src="@{${job.imagePath}}" alt="职位图片" class="job-image" th:if="${job.imagePath}" />
+                <div class="job-title" th:text="${job.title}">职位名称</div>
+                <p class="job-location"><strong>地点:</strong> <span th:text="${job.location}">地点</span></p>
+                <p class="job-salary"><strong>薪资范围:</strong> <span th:text="${job.salaryRange}">薪资范围</span></p>
+                <p class="job-company"><strong>公司:</strong> <span th:text="${job.company}">公司名称</span></p>
+                <a th:href="@{/admin/jobs/detail/{id}(id=${job.id})}" class="btn btn-info btn-sm">查看详情</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pagination -->
+    <div class="text-center">
+        <ul class="pagination">
+            <li th:if="${page.number > 0}">
+                <a th:href="@{/admin/jobs/grid?page=0&search=${searchQuery}}">«</a>
+            </li>
+            <li th:each="i : ${#numbers.sequence(0, page.totalPages - 1)}" th:classappend="${i == page.number} ? 'active'">
+                <a th:href="@{/admin/jobs/grid?page={pageNum}&search={searchQuery}}"
+                   th:text="${i + 1}" th:attr="data-page=${i}"></a>
+            </li>
+            <li th:if="${page.number < page.totalPages - 1}">
+                <a th:href="@{/admin/jobs/grid?page={nextPage}&search=${searchQuery}}">»</a>
+            </li>
+        </ul>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"
+        integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfL+PY2m9U0x00HwyCCFCz3OSBmPFqddw3c6r9gVX"
+        crossorigin="anonymous"></script>
+
+</body>
+</html>
